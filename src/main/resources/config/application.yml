@@ -1,0 +1,25 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/mail_account_scanner?useUnicode=true&characterEncoding=utf8&useSSL=false
+    username: mail_account_scanner
+    password: mail_account_scanner
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    database: MYSQL
+    show-sql: false
+    hibernate:
+      ddl-auto: update
+
+mail-account-scanner:
+  mail:
+    folder: /mail
+
+logging:
+  level:
+    org:
+      springframework:
+        web: ERROR
+      hibernate: ERROR
+    com:
+      example:
+        mailaccountscanner: DEBUG

@@ -1,18 +1,14 @@
 package com.example.mailaccountscanner.service;
 
-import com.example.mailaccountscanner.service.dto.MailAccountDto;
+import com.example.mailaccountscanner.service.dto.MailAccountDTO;
 
-import javax.mail.Message;
-import javax.mail.Session;
-import javax.mail.search.SearchTerm;
-import java.util.List;
+import java.util.Optional;
 
 public interface MailAccountService {
 
-    Session connectToMailAccount(MailAccountDto mailAccountDto);
+    Optional<MailAccountDTO> findOne(Long id);
 
-    List<Message> getMessagesByTerm(SearchTerm searchTerm);
-
+    boolean existsById(Long id);
 
 
 }

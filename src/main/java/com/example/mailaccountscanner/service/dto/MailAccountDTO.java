@@ -1,30 +1,17 @@
-package com.example.mailaccountscanner.domain;
+package com.example.mailaccountscanner.service.dto;
 
-import javax.persistence.*;
+public class MailAccountDTO {
 
-@Entity
-@Table(name = "mail_account")
-public class MailAccount{
-
-    @Id
-    @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "description")
     private String description;
 
-    @Column(name = "email_address",nullable = false)
     private String emailAddress;
 
-    // TODO must be encrypted
-    @Column(name = "password",nullable = false)
     private String password;
 
-    @Column(name = "host",nullable = false)
     private String host;
 
-    @Column(name = "port",nullable = false)
     private Integer port;
 
     public Long getId() {

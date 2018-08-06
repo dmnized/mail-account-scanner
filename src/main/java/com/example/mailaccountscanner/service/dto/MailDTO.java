@@ -1,45 +1,29 @@
-package com.example.mailaccountscanner.domain;
+package com.example.mailaccountscanner.service.dto;
 
 import com.example.mailaccountscanner.domain.enumeration.MailType;
 
-import javax.persistence.*;
 import java.time.Instant;
 
-@Entity
-@Table(name = "mail",indexes = {@Index(name = "HASH_HEX_INDEX",columnList = "hash_hex")})
-public class Mail {
+public class MailDTO {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "mail_account_id")
-    private MailAccount mailAccount;
+    private Long mailAccountId;
 
-    @Column(name = "receipt_date", nullable = false)
     private Instant receiptDate;
 
-    @Column(name = "sender", nullable = false)
     private String sender;
 
-    @Column(name = "subject", nullable = false)
     private String subject;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "mail_type")
     private MailType mailType;
 
-    @Column(name = "message_id_header")
     private String messageIdHeader;
 
-    @Column(name = "x_ref_message_id_header")
     private String xRefMessageIdHeader;
 
-    @Column(name = "hash_hex",nullable = false,length = 64,unique = true)
     private String hashHex;
 
-    @Column(name = "full_file_path",nullable = false,unique = true)
     private String fullFilePath;
 
     public Long getId() {
@@ -50,12 +34,12 @@ public class Mail {
         this.id = id;
     }
 
-    public MailAccount getMailAccount() {
-        return mailAccount;
+    public Long getMailAccountId() {
+        return mailAccountId;
     }
 
-    public void setMailAccount(MailAccount mailAccount) {
-        this.mailAccount = mailAccount;
+    public void setMailAccountId(Long mailAccountId) {
+        this.mailAccountId = mailAccountId;
     }
 
     public Instant getReceiptDate() {

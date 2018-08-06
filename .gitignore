@@ -23,3 +23,7 @@
 /dist/
 /nbdist/
 /.nb-gradle/
+
+### Mail folder ###
+mail/*
+!mail/README.md
