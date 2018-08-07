@@ -11,7 +11,7 @@ public interface MailService {
 
     MailDTO save(MailDTO mailDTO);
 
-    boolean isMailAlreadyPresent(MailDTO mailDTO);
+    boolean isMailHashAlreadyPresent(String hashHex);
 
     Optional<MailDTO> findByMailAccountIdAndMailId(Long mailAccountId, Long mailId);
 

@@ -42,6 +42,9 @@ public class Mail {
     @Column(name = "full_file_path",nullable = false,unique = true)
     private String fullFilePath;
 
+    @Column(name = "receipt_day",nullable = false,length = 8)
+    private String receiptDay;
+
     public Long getId() {
         return id;
     }
@@ -120,5 +123,13 @@ public class Mail {
 
     public void setFullFilePath(String fullFilePath) {
         this.fullFilePath = fullFilePath;
+    }
+
+    public String getReceiptDay() {
+        return receiptDay;
+    }
+
+    public void setReceiptDay(String receiptDay) {
+        this.receiptDay = receiptDay;
     }
 }

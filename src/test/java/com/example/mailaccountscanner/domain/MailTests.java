@@ -14,8 +14,8 @@ public class MailTests {
 
     @Test
     public void fieldAnnotations(){
-        AssertAnnotations.assertField(Mail.class,"id",Id.class);
-        AssertAnnotations.assertField(Mail.class,"mailAccount",ManyToOne.class);
+        AssertAnnotations.assertField(Mail.class,"id",Id.class,GeneratedValue.class);
+        AssertAnnotations.assertField(Mail.class,"mailAccount",ManyToOne.class,JoinColumn.class);
         AssertAnnotations.assertField(Mail.class,"receiptDate",Column.class);
         AssertAnnotations.assertField(Mail.class,"sender",Column.class);
         AssertAnnotations.assertField(Mail.class,"subject",Column.class);

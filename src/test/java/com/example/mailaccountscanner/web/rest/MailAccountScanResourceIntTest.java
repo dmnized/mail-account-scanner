@@ -1,6 +1,7 @@
 package com.example.mailaccountscanner.web.rest;
 
 import com.example.mailaccountscanner.MailAccountScannerApplication;
+import com.example.mailaccountscanner.config.Constants;
 import com.example.mailaccountscanner.service.MailAccountScanService;
 import com.example.mailaccountscanner.service.MailAccountService;
 import com.example.mailaccountscanner.service.dto.MailAccountScanDTO;
@@ -16,8 +17,11 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.util.Date;
 
+import static com.example.mailaccountscanner.config.Constants.RECEIPT_DAY_FORMAT;
 import static com.example.mailaccountscanner.utils.Test.convertObjectToJsonBytes;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -45,7 +49,7 @@ public class MailAccountScanResourceIntTest {
 
     @Test
     public void mailAccountIdIsRequired() throws Exception {
-        mailAccountScanDTO = new MailAccountScanDTO(null,Instant.now());
+        mailAccountScanDTO = new MailAccountScanDTO(null, getReceiptDayFromDate(new Date()));
 
         this.restResourceMockMvc.perform(post("/api/mail-account-scans")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
@@ -67,7 +71,7 @@ public class MailAccountScanResourceIntTest {
 
     @Test
     public void createdIfRequestValidAndMailScanIsNotRunning() throws Exception {
-        mailAccountScanDTO = new MailAccountScanDTO(1l,Instant.now());
+        mailAccountScanDTO = new MailAccountScanDTO(1l,getReceiptDayFromDate(new Date()));
 
         MailAccountScanService mailAccountScanService = new MailAccountScanService() {
             @Override
@@ -98,7 +102,8 @@ public class MailAccountScanResourceIntTest {
 
     @Test
     public void conflictIfMailScanIsAlreadyRunning() throws Exception {
-        mailAccountScanDTO = new MailAccountScanDTO(1l,Instant.now());
+
+        mailAccountScanDTO = new MailAccountScanDTO(1l, getReceiptDayFromDate(new Date()));
 
         MailAccountScanService mailAccountScanService = new MailAccountScanService() {
             @Override
@@ -126,6 +131,10 @@ public class MailAccountScanResourceIntTest {
             setup();
         }
 
+    }
+
+    private String getReceiptDayFromDate(Date date) {
+        return RECEIPT_DAY_FORMAT.format(date);
     }
 
 }

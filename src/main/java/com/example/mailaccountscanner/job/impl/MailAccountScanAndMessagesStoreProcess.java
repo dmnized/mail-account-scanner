@@ -55,8 +55,8 @@ public class MailAccountScanAndMessagesStoreProcess implements JobProcess {
     }
 
     private List<Message> getMessagesUsingImap(Optional<Long> mailAccountId, Optional<Instant> receiptDate) throws Exception {
+        log.debug("Getting messages using IMAP mailAccountId {} receiptDate {} ",mailAccountId,receiptDate);
         MailAccountConnectionService mailAccountConnectionService = connectToMailAccountUsingImap(mailAccountId);
-
         return searchMessagesByReceiptDate(receiptDate, mailAccountConnectionService);
     }
 
@@ -70,6 +70,7 @@ public class MailAccountScanAndMessagesStoreProcess implements JobProcess {
     }
 
     private MailAccountConnectionService connectToMailAccountUsingImap(Optional<Long> mailAccountId) throws Exception {
+        log.debug("IMAP Connecting to mailAccount with id {} ",mailAccountId);
         MailAccountDTO mailAccountDTO = getMailAccount(mailAccountId);
         MailAccountConnectionService mailAccountConnectionService = new ImapConnectionService();
         mailAccountConnectionService.connectToMailAccount(mailAccountDTO);

@@ -1,6 +1,7 @@
 package com.example.mailaccountscanner.service.impl;
 
 import com.example.mailaccountscanner.domain.Mail;
+import com.example.mailaccountscanner.domain.enumeration.MailType;
 import com.example.mailaccountscanner.repository.MailRepository;
 import com.example.mailaccountscanner.service.MailService;
 import com.example.mailaccountscanner.service.dto.MailDTO;
@@ -33,26 +34,31 @@ public class MailServiceImpl implements MailService {
     @Override
     @Transactional
     public MailDTO save(MailDTO mailDTO) {
+        log.debug("Request to save mail {}",mailDTO);
+        // TODO: 07/08/2018 remove Random
+        mailDTO.setMailType(MailType.getRandom());
         Mail mail = mailMapper.toEntity(mailDTO);
         mail = mailRepository.save(mail);
         return mailMapper.toDto(mail);
     }
 
     @Override
-    public boolean isMailAlreadyPresent(MailDTO mailDTO) {
-        boolean isMailAlreadyPresent = mailRepository.existsByHashHex(mailDTO.getHashHex());
-        log.debug("{} isAlreadyPresent: {}",mailDTO.getHashHex(),isMailAlreadyPresent);
+    public boolean isMailHashAlreadyPresent(String hashHex) {
+        boolean isMailAlreadyPresent = mailRepository.existsByHashHex(hashHex);
+        log.debug("{} isAlreadyPresent: {}",hashHex,isMailAlreadyPresent);
         return isMailAlreadyPresent;
     }
 
     @Override
     public Optional<MailDTO> findByMailAccountIdAndMailId(Long mailAccountId, Long mailId) {
+        log.debug("Request to find a mail by mailAccountId {} and mailId {}",mailAccountId,mailAccountId);
         return mailRepository.findByMailAccountIdAndId(mailAccountId, mailId)
                 .map(mailMapper::toDto);
     }
 
     @Override
     public Page<MailDTO> searchMails(MailSearchDTO mailSearchDTO, Pageable pageable) {
+        log.debug("Request to search mails by mailSeaarch {} and pageable {}",mailSearchDTO,pageable);
         Example<Mail> mailExample = Example.of(mailMapper.toEntity(mailSearchDTO));
         return mailRepository.findAll(mailExample,pageable)
                 .map(mailMapper::toDto);

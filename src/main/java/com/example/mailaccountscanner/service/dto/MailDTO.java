@@ -26,6 +26,8 @@ public class MailDTO {
 
     private String fullFilePath;
 
+    private String receiptDay;
+
     public Long getId() {
         return id;
     }
@@ -104,5 +106,30 @@ public class MailDTO {
 
     public void setFullFilePath(String fullFilePath) {
         this.fullFilePath = fullFilePath;
+    }
+
+    public String getReceiptDay() {
+        return receiptDay;
+    }
+
+    public void setReceiptDay(String receiptDay) {
+        this.receiptDay = receiptDay;
+    }
+
+    @Override
+    public String toString() {
+        return "MailDTO{" +
+                "id=" + id +
+                ", mailAccountId=" + mailAccountId +
+                ", receiptDate=" + receiptDate +
+                ", sender='" + sender + '\'' +
+                ", subject='" + subject + '\'' +
+                ", mailType=" + mailType +
+                ", messageIdHeader='" + messageIdHeader + '\'' +
+                ", xRefMessageIdHeader='" + xRefMessageIdHeader + '\'' +
+                ", hashHex='" + hashHex + '\'' +
+                ", fullFilePath='" + fullFilePath + '\'' +
+                ", receiptDay='" + receiptDay + '\'' +
+                '}';
     }
 }

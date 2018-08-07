@@ -20,6 +20,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Qualifier("FileSystemAndDatabaseMessageStoreServiceImpl")
@@ -42,14 +43,14 @@ public class FileSystemAndDatabaseMessageStoreServiceImpl implements MessageStor
 
     @Override
     public List<MailDTO> saveMessagesForMailAccount(Long mailAccountId, List<Message> messages) {
+        log.debug("Request to save messages {} for mailAccount with id {}",messages.size(),mailAccountId);
 
         List<MailDTO> mailDTOList = new ArrayList<>();
 
         for(Message message : messages){
             try {
-                MailDTO mailDTO = messageMapper.toMailDTO(message);
-                if( ! mailService.isMailAlreadyPresent(mailDTO)) {
-                    saveMessages(mailAccountId, mailDTOList, message, mailDTO);
+                if( ! mailService.isMailHashAlreadyPresent(messageMapper.computeHash(message))) {
+                   saveMessage(mailAccountId,message).map(mailDTOList::add);
                 }
             } catch (Exception e) {
                 log.error(e.getMessage(),e);
@@ -60,23 +61,29 @@ public class FileSystemAndDatabaseMessageStoreServiceImpl implements MessageStor
         return mailDTOList;
     }
 
-    private void saveMessages(Long mailAccountId, List<MailDTO> mailDTOList, Message message, MailDTO mailDTO) throws Exception {
+    private Optional<MailDTO> saveMessage(Long mailAccountId, Message message) throws Exception {
 
         String fullPath = null;
+        Optional<MailDTO> result = Optional.empty();
         try {
+            MailDTO mailDTO = messageMapper.toMailDTO(message);
+            mailDTO.setReceiptDay(messageMapper.receiptDay(message));
             mailDTO.setMailAccountId(mailAccountId);
             fullPath = saveToFileSystem(mailDTO, message);
             mailDTO.setFullFilePath(fullPath);
-            mailDTOList.add(mailService.save(mailDTO));
+            result = Optional.of(mailService.save(mailDTO));
         }catch(Exception e){
             if(fullPath!=null) {
                 File file = new File(fullPath);
                 file.delete();
             }
+            log.error(e.getMessage(),e);
         }
+        return result;
     }
 
     private String saveToFileSystem(MailDTO mailDTO, Message message) throws Exception {
+        log.debug("Saving message to file system {} ",mailDTO);
         File file = getFilePath(mailDTO,message).toFile();
         file.getParentFile().mkdirs();
         FileUtils.writeByteArrayToFile(file, messageMapper.toByteArray(message));

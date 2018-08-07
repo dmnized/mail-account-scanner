@@ -1,9 +1,10 @@
 package com.example.mailaccountscanner.service.dto;
 
 import com.example.mailaccountscanner.domain.enumeration.MailType;
-import org.springframework.format.annotation.DateTimeFormat;
 
-import java.time.Instant;
+import javax.validation.constraints.Pattern;
+
+import static com.example.mailaccountscanner.config.Constants.RECEIPT_DAY_VALIDATION_PATTERN;
 
 public class MailSearchDTO {
 
@@ -11,8 +12,8 @@ public class MailSearchDTO {
 
     private MailType mailType;
 
-    @DateTimeFormat(pattern = "yyyyMMdd")
-    private Instant receiptDate;
+    @Pattern(regexp = RECEIPT_DAY_VALIDATION_PATTERN)
+    private String receiptDay;
 
     public Long getMailAccountId() {
         return mailAccountId;
@@ -30,11 +31,20 @@ public class MailSearchDTO {
         this.mailType = mailType;
     }
 
-    public Instant getReceiptDate() {
-        return receiptDate;
+    public String getReceiptDay() {
+        return receiptDay;
     }
 
-    public void setReceiptDate(Instant receiptDate) {
-        this.receiptDate = receiptDate;
+    public void setReceiptDay(String receiptDay) {
+        this.receiptDay = receiptDay;
+    }
+
+    @Override
+    public String toString() {
+        return "MailSearchDTO{" +
+                "mailAccountId=" + mailAccountId +
+                ", mailType=" + mailType +
+                ", receiptDay='" + receiptDay + '\'' +
+                '}';
     }
 }

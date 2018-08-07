@@ -61,4 +61,16 @@ public class MailAccountDTO {
     public void setPort(Integer port) {
         this.port = port;
     }
+
+    @Override
+    public String toString() {
+        return "MailAccountDTO{" +
+                "id=" + id +
+                ", description='" + description + '\'' +
+                ", emailAddress='" + emailAddress + '\'' +
+                ", password='" + password + '\'' +
+                ", host='" + host + '\'' +
+                ", port=" + port +
+                '}';
+    }
 }

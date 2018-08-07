@@ -2,6 +2,8 @@ package com.example.mailaccountscanner.service.impl;
 
 import com.example.mailaccountscanner.service.MailAccountConnectionService;
 import com.example.mailaccountscanner.service.dto.MailAccountDTO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.mail.*;
 import javax.mail.search.SearchTerm;
@@ -9,6 +11,7 @@ import java.util.List;
 import java.util.Properties;
 
 public class ImapConnectionService extends MailAccountConnectionService {
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     private String protocol = "imaps";
 
@@ -16,6 +19,7 @@ public class ImapConnectionService extends MailAccountConnectionService {
 
     @Override
     public void connectToMailAccount(MailAccountDTO mailAccountDTO) throws MessagingException {
+        log.debug("Connecting mail account using IMAP {} ",mailAccountDTO);
         URLName url = new URLName(protocol,
                 mailAccountDTO.getHost(),
                 mailAccountDTO.getPort(),
