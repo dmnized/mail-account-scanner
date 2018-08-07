@@ -44,9 +44,7 @@ public class FileSystemAndDatabaseMessageStoreServiceImpl implements MessageStor
     @Override
     public List<MailDTO> saveMessagesForMailAccount(Long mailAccountId, List<Message> messages) {
         log.debug("Request to save messages {} for mailAccount with id {}",messages.size(),mailAccountId);
-
         List<MailDTO> mailDTOList = new ArrayList<>();
-
         for(Message message : messages){
             try {
                 if( ! mailService.isMailHashAlreadyPresent(messageMapper.computeHash(message))) {
@@ -55,23 +53,17 @@ public class FileSystemAndDatabaseMessageStoreServiceImpl implements MessageStor
             } catch (Exception e) {
                 log.error(e.getMessage(),e);
             }
-
         }
-
         return mailDTOList;
     }
 
-    private Optional<MailDTO> saveMessage(Long mailAccountId, Message message) throws Exception {
-
+    private Optional<MailDTO> saveMessage(Long mailAccountId, Message message){
         String fullPath = null;
         Optional<MailDTO> result = Optional.empty();
         try {
-            MailDTO mailDTO = messageMapper.toMailDTO(message);
-            mailDTO.setReceiptDay(messageMapper.receiptDay(message));
-            mailDTO.setMailAccountId(mailAccountId);
-            fullPath = saveToFileSystem(mailDTO, message);
-            mailDTO.setFullFilePath(fullPath);
-            result = Optional.of(mailService.save(mailDTO));
+            MailDTO mailDTO = initializeMailDTO(mailAccountId, message);
+            mailDTO = saveToFileSystem(mailDTO, message);
+            result = saveToDatabase(mailDTO);
         }catch(Exception e){
             if(fullPath!=null) {
                 File file = new File(fullPath);
@@ -82,12 +74,25 @@ public class FileSystemAndDatabaseMessageStoreServiceImpl implements MessageStor
         return result;
     }
 
-    private String saveToFileSystem(MailDTO mailDTO, Message message) throws Exception {
+    private Optional<MailDTO> saveToDatabase(MailDTO mailDTO) {
+        log.debug("Saving message to database {} ",mailDTO);
+        return Optional.of(mailService.save(mailDTO));
+    }
+
+    private MailDTO initializeMailDTO(Long mailAccountId, Message message) throws Exception {
+        MailDTO mailDTO = messageMapper.toMailDTO(message);
+        mailDTO.setReceiptDay(messageMapper.receiptDay(message));
+        mailDTO.setMailAccountId(mailAccountId);
+        return mailDTO;
+    }
+
+    private MailDTO saveToFileSystem(MailDTO mailDTO, Message message) throws Exception {
         log.debug("Saving message to file system {} ",mailDTO);
         File file = getFilePath(mailDTO,message).toFile();
         file.getParentFile().mkdirs();
         FileUtils.writeByteArrayToFile(file, messageMapper.toByteArray(message));
-        return file.getAbsolutePath();
+        mailDTO.setFullFilePath(file.getAbsolutePath());
+        return mailDTO;
     }
 
 
@@ -96,13 +101,11 @@ public class FileSystemAndDatabaseMessageStoreServiceImpl implements MessageStor
     }
 
     private Path getFilePath(MailDTO mailDTO, Message message) throws MessagingException {
-
         return Paths.get(getFileSystemBasePath(),String.valueOf(mailDTO.getMailAccountId()),
                 getYear(message.getReceivedDate()),
                 getMonth(message.getReceivedDate()),
                 getDay(message.getReceivedDate()),
                 mailDTO.getHashHex());
-
     }
 
     private String getYear(Date date) throws MessagingException {
